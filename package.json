@@ -1,18 +1,19 @@
 {
-  "name": "GhostLine",
+  "name": "ghostline-monorepo",
+  "private": true,
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "GhostLine monorepo (core + react + vue)",
   "packageManager": "pnpm@10.11.0",
+  "scripts": {
+    "build": "pnpm -r --filter \"./packages/*\" run build",
+    "clean": "pnpm -r --filter \"./packages/*\" run clean",
+    "typecheck": "pnpm -r --filter \"./packages/*\" run typecheck"
+  },
   "devDependencies": {
     "@types/node": "^24.8.1",
+    "rimraf": "^6.0.0",
     "tsup": "^8.5.0",
     "typescript": "^5.9.3"
-  }
+  },
+  "license": "MIT"
 }

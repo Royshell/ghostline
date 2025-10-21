@@ -1,0 +1,25 @@
+{
+  "name": "@royshell/ghostline-react",
+  "version": "0.0.1",
+  "description": "React wrapper for GhostLine.",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.mjs", "require": "./dist/index.cjs" }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "sideEffects": false,
+  "publishConfig": { "access": "public" },
+  "peerDependencies": { "react": ">=18", "react-dom": ">=18" },
+  "dependencies": {
+    "@royshell/ghostline-core": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsup src/index.tsx --format cjs,esm --dts --clean",
+    "clean": "rimraf dist",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "pnpm run build"
+  }
+}
