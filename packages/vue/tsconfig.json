@@ -1,8 +1,10 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "noEmit": false
-  },
-  "include": ["src"]
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@royshell/ghostline-vue": ["../../packages/vue/src"]
+    },
+    "skipLibCheck": true
+  }
 }
