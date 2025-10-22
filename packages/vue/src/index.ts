@@ -1,53 +1,100 @@
 import { defineComponent, h, onMounted, onBeforeUnmount, ref } from 'vue';
 
+const YELLOW_HIGHLIGHT_COLOR = '#FFF200';
 export const GhostLineCanvas = defineComponent({
   name: 'GhostLineCanvas',
   props: {
     width: { type: Number, default: 640 },
     height: { type: Number, default: 400 },
-    lineWidth: { type: Number, default: 2 },
+    lineWidth: { type: Number, default: 5 },
+    markerColor: { type: String, default:  YELLOW_HIGHLIGHT_COLOR },
+    fadeDuration: { type: Number, default: 1800 },
   },
   setup(props) {
     const canvasRef = ref<HTMLCanvasElement | null>(null);
-    let drawing = false;
+    let isDrawing = false;
     let ctx: CanvasRenderingContext2D | null = null;
 
-    const onDown = (e: PointerEvent) => {
-      if (!ctx) return;
-      drawing = true;
+    // Begin drawing on pointer down
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!ctx) {
+        return;
+      }
+      isDrawing = true;
+      ctx.strokeStyle = props.markerColor;
       ctx.beginPath();
-      ctx.moveTo((e as any).offsetX, (e as any).offsetY);
+      ctx.moveTo(event.offsetX, event.offsetY);
     };
 
-    const onMove = (e: PointerEvent) => {
-      if (!drawing || !ctx) return;
-      ctx.lineTo((e as any).offsetX, (e as any).offsetY);
+    // Stroke while moving
+    const handlePointerMove = (event: PointerEvent) => {
+      if (!isDrawing || !ctx) {
+        return;
+      }
+      ctx.lineTo(event.offsetX, event.offsetY);
       ctx.stroke();
     };
 
-    const onUp = () => {
-      drawing = false;
+    // Finish stroke and fade out
+    const handlePointerUp = () => {
+      isDrawing = false;
+      fadeOut(props.fadeDuration);
+    };
+
+    // CSS-opacity fade of the entire canvas, then clear bitmap
+    const fadeOut = (duration: number) => {
+      const canvas = canvasRef.value;
+      if (!canvas) return;
+
+      // Reset transition, ensure fully opaque before starting
+      canvas.style.transition = 'none';
+      canvas.style.opacity = '1';
+
+      // Kick off transition in next frame
+      requestAnimationFrame(() => {
+        canvas.style.transition = `opacity ${duration}ms linear`;
+        canvas.style.opacity = '0';
+      });
+
+      const handleTransitionEnd = () => {
+        const localCtx = canvas.getContext('2d');
+        if (localCtx) localCtx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.style.transition = 'none';
+        canvas.style.opacity = '1';
+        canvas.removeEventListener('transitionend', handleTransitionEnd);
+      };
+
+      canvas.addEventListener('transitionend', handleTransitionEnd, { once: true });
     };
 
     onMounted(() => {
-      const c = canvasRef.value!;
-      ctx = c.getContext('2d');
+      const canvas = canvasRef.value!;
+      ctx = canvas.getContext('2d');
       if (!ctx) return;
+
+      // Basic stroke setup
       ctx.lineWidth = props.lineWidth;
       ctx.lineCap = 'round';
-      c.style.touchAction = 'none';
 
-      c.addEventListener('pointerdown', onDown);
-      c.addEventListener('pointermove', onMove);
-      window.addEventListener('pointerup', onUp);
+      // Prevent browser gestures
+      canvas.style.touchAction = 'none';
+
+      canvas.addEventListener('pointerdown', handlePointerDown);
+      canvas.addEventListener('pointermove', handlePointerMove);
+      window.addEventListener('pointerup', handlePointerUp);
+      window.addEventListener('pointercancel', handlePointerUp);
+      window.addEventListener('pointerleave', handlePointerUp);
     });
 
     onBeforeUnmount(() => {
-      const c = canvasRef.value;
-      if (!c) return;
-      c.removeEventListener('pointerdown', onDown);
-      c.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
+      const canvas = canvasRef.value;
+      if (!canvas) return;
+
+      canvas.removeEventListener('pointerdown', handlePointerDown);
+      canvas.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
+      window.removeEventListener('pointerleave', handlePointerUp);
     });
 
     return () =>
