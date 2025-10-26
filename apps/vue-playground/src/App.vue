@@ -4,24 +4,33 @@
 </script>
 
 <template>
-  <div style="background-color: blue">
-    <GhostLineCanvas />
-    <a
-      href="https://vite.dev"
-      target="_blank">
-      <img
-        src="/vite.svg"
-        class="logo"
-        alt="Vite logo" />
-    </a>
-    <a
-      href="https://vuejs.org/"
-      target="_blank">
-      <img
-        src="./assets/vue.svg"
-        class="logo vue"
-        alt="Vue logo" />
-    </a>
+  <div class="wrap">
+    <img
+      src="/vite.svg"
+      class="logo"
+      alt="Vite logo" />
+
+    <GhostLineCanvas
+      :line-color="'rgba(12,10,59,0.23)'"
+      :line-cap="'square'"
+      class="z">
+      <a
+        href="https://vite.dev"
+        target="_blank">
+        <img
+          src="/vite.svg"
+          class="logo"
+          alt="Vite logo" />
+      </a>
+      <a
+        href="https://vuejs.org/"
+        target="_blank">
+        <img
+          src="./assets/vue.svg"
+          class="logo vue"
+          alt="Vue logo" />
+      </a>
+    </GhostLineCanvas>
   </div>
   <HelloWorld msg="Vite + Vue" />
 </template>
@@ -38,5 +47,12 @@
   }
   .logo.vue:hover {
     filter: drop-shadow(0 0 2em #42b883aa);
+  }
+  .wrap {
+    background: url(https://pub-55ace036049a4ea9a5b6c33f7c2e1974.r2.dev/public/BG%20Image3.png)
+      no-repeat center center fixed;
+  }
+  .z {
+    z-index: 9999999999999999999999;
   }
 </style>

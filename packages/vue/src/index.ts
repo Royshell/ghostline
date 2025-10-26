@@ -1,110 +1,131 @@
-import { defineComponent, h, onMounted, onBeforeUnmount, ref } from 'vue';
+import { defineComponent, h, onMounted, onBeforeUnmount, ref, PropType } from 'vue';
 
-const YELLOW_HIGHLIGHT_COLOR = '#FFF200';
 export const GhostLineCanvas = defineComponent({
   name: 'GhostLineCanvas',
   props: {
     width: { type: Number, default: 640 },
     height: { type: Number, default: 400 },
     lineWidth: { type: Number, default: 5 },
-    markerColor: { type: String, default:  YELLOW_HIGHLIGHT_COLOR },
-    fadeDuration: { type: Number, default: 1800 },
+    lineColor: { type: String, default: '#FFF200' },
+    fadingTime: { type: Number, default: 850 },
+    lineCap: { type: String as PropType<'butt' | 'square' | 'round'>, default: 'round'},
+    diasbleFade: {type: Boolean, default: false}
   },
   setup(props) {
     const canvasRef = ref<HTMLCanvasElement | null>(null);
-    let isDrawing = false;
     let ctx: CanvasRenderingContext2D | null = null;
+    let drawing = false;
 
-    // Begin drawing on pointer down
-    const handlePointerDown = (event: PointerEvent) => {
-      if (!ctx) {
+    /** Fade-out animation that triggers transitionend listener */
+    const fadeOut = (canvas: HTMLCanvasElement, duration = props.fadingTime) => {
+      if (!canvas) {
         return;
       }
-      isDrawing = true;
-      ctx.strokeStyle = props.markerColor;
+
+      // Reset previous transition state to ensure new transition triggers
+      canvas.style.transition = 'none';
+      void canvas.offsetWidth; // force reflow
+      canvas.style.transition = `opacity ${duration}ms linear`;
+      canvas.style.opacity = '0';
+    };
+
+    /** Instantly restore canvas visibility */
+    const revive = (canvas: HTMLCanvasElement) => {
+      if (!canvas) return;
+      //canvas.style.transition = 'none';
+      canvas.style.opacity = '1';
+    };
+
+    /** Drawing start */
+    const onDown = (event: PointerEvent) => {
+      if (!ctx || !canvasRef.value) return;
+      revive(canvasRef.value);
+      drawing = true;
       ctx.beginPath();
       ctx.moveTo(event.offsetX, event.offsetY);
     };
 
-    // Stroke while moving
-    const handlePointerMove = (event: PointerEvent) => {
-      if (!isDrawing || !ctx) {
+    /** Drawing move */
+    const onMove = (event: PointerEvent) => {
+      if (!drawing || !ctx) {
         return;
       }
       ctx.lineTo(event.offsetX, event.offsetY);
       ctx.stroke();
     };
 
-    // Finish stroke and fade out
-    const handlePointerUp = () => {
-      isDrawing = false;
-      fadeOut(props.fadeDuration);
-    };
-
-    // CSS-opacity fade of the entire canvas, then clear bitmap
-    const fadeOut = (duration: number) => {
-      const canvas = canvasRef.value;
-      if (!canvas) return;
-
-      // Reset transition, ensure fully opaque before starting
-      canvas.style.transition = 'none';
-      canvas.style.opacity = '1';
-
-      // Kick off transition in next frame
-      requestAnimationFrame(() => {
-        canvas.style.transition = `opacity ${duration}ms linear`;
-        canvas.style.opacity = '0';
-      });
-
-      const handleTransitionEnd = () => {
-        const localCtx = canvas.getContext('2d');
-        if (localCtx) localCtx.clearRect(0, 0, canvas.width, canvas.height);
-        canvas.style.transition = 'none';
-        canvas.style.opacity = '1';
-        canvas.removeEventListener('transitionend', handleTransitionEnd);
-      };
-
-      canvas.addEventListener('transitionend', handleTransitionEnd, { once: true });
+    /** Drawing end */
+    const onUp = () => {
+      if (!drawing) {
+        return;
+      }
+      drawing = false;
+      
+      if (canvasRef.value && !props.diasbleFade) {
+        fadeOut(canvasRef.value);
+      }
     };
 
     onMounted(() => {
       const canvas = canvasRef.value!;
       ctx = canvas.getContext('2d');
-      if (!ctx) return;
 
-      // Basic stroke setup
+      if (!ctx) {
+        return;
+      }
+
       ctx.lineWidth = props.lineWidth;
-      ctx.lineCap = 'round';
+      ctx.lineCap = props.lineCap;
+      ctx.strokeStyle = props.lineColor;
 
-      // Prevent browser gestures
       canvas.style.touchAction = 'none';
+      canvas.style.opacity = '1';
 
-      canvas.addEventListener('pointerdown', handlePointerDown);
-      canvas.addEventListener('pointermove', handlePointerMove);
-      window.addEventListener('pointerup', handlePointerUp);
-      window.addEventListener('pointercancel', handlePointerUp);
-      window.addEventListener('pointerleave', handlePointerUp);
+      canvas.addEventListener('pointerdown', onDown);
+      canvas.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+
+      // 🔹 Listen for every fade end
+      canvas.addEventListener('transitionend', (event) => {
+        // Only handle opacity transitions
+        if (event.propertyName !== 'opacity') {
+          return;
+        }
+        
+        if (getComputedStyle(canvas).opacity !== '0') {
+          return;
+        }
+
+        const context = canvas.getContext('2d');
+        if (context) context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Reset opacity instantly for next draw
+        canvas.style.transition = 'none';
+        canvas.style.opacity = '1';
+      });
     });
 
     onBeforeUnmount(() => {
       const canvas = canvasRef.value;
-      if (!canvas) return;
+      if (!canvas) {
+        return;
+      }
 
-      canvas.removeEventListener('pointerdown', handlePointerDown);
-      canvas.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerup', handlePointerUp);
-      window.removeEventListener('pointercancel', handlePointerUp);
-      window.removeEventListener('pointerleave', handlePointerUp);
+      canvas.removeEventListener('pointerdown', onDown);
+      canvas.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
     });
 
     return () =>
       h('canvas', {
-        ref: (el: HTMLCanvasElement | null) => {
-          canvasRef.value = el;
-        },
+        ref: canvasRef,
         width: props.width,
         height: props.height,
-        style: 'border:1px solid #ddd; display:block; max-width:100%;',
+        style: `
+          display:block;
+          max-width:100%;
+          transition:opacity ${props.fadingTime}ms linear;
+        `,
       });
   },
 });
