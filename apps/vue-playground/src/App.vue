@@ -1,6 +1,10 @@
 <script setup lang="ts">
   import HelloWorld from "./components/HelloWorld.vue";
   import GhostLineCanvas from "@royshell/ghostline-vue";
+
+  function handleCtx(ctx: CanvasRenderingContext2D) {
+    console.log(ctx);
+  }
 </script>
 
 <template>
@@ -11,26 +15,25 @@
       alt="Vite logo" />
 
     <GhostLineCanvas
-      :line-color="'rgba(12,10,59,0.23)'"
-      :line-width="80"
-      class="z">
-      <a
-        href="https://vite.dev"
-        target="_blank">
-        <img
-          src="/vite.svg"
-          class="logo"
-          alt="Vite logo" />
-      </a>
-      <a
-        href="https://vuejs.org/"
-        target="_blank">
-        <img
-          src="./assets/vue.svg"
-          class="logo vue"
-          alt="Vue logo" />
-      </a>
-    </GhostLineCanvas>
+      :line-color="'rgba(222,9,159,0.23)'"
+      :line-width="8"
+      @draw-end="handleCtx($event)" />
+    <a
+      href="https://vite.dev"
+      target="_blank">
+      <img
+        src="/vite.svg"
+        class="logo"
+        alt="Vite logo" />
+    </a>
+    <a
+      href="https://vuejs.org/"
+      target="_blank">
+      <img
+        src="./assets/vue.svg"
+        class="logo vue"
+        alt="Vue logo" />
+    </a>
   </div>
   <HelloWorld msg="Vite + Vue" />
 </template>

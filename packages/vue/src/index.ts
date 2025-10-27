@@ -1,7 +1,11 @@
 import { defineComponent, h, onMounted, onBeforeUnmount, ref, PropType } from 'vue';
-
+type Point = {
+  x: number;
+  y: number; 
+}
 export const GhostLineCanvas = defineComponent({
   name: 'GhostLineCanvas',
+  emits: ['draw-end'],
   props: {
     width: { type: Number, default: 640 },
     height: { type: Number, default: 400 },
@@ -11,9 +15,10 @@ export const GhostLineCanvas = defineComponent({
     lineCap: { type: String as PropType<'butt' | 'square' | 'round'>, default: 'round'},
     diasbleFade: {type: Boolean, default: false}
   },
-  setup(props) {
+  setup(props,{ emit }) {
     const canvasRef = ref<HTMLCanvasElement | null>(null);
     let ctx: CanvasRenderingContext2D | null = null;
+    let paintedPixels: Point[] = [];
     let drawing = false;
 
     /** Fade-out animation that triggers transitionend listener */
@@ -31,8 +36,10 @@ export const GhostLineCanvas = defineComponent({
 
     /** Instantly restore canvas visibility */
     const revive = (canvas: HTMLCanvasElement) => {
-      if (!canvas) return;
-      //canvas.style.transition = 'none';
+      if (!canvas) {
+        return;
+      }
+      canvas.style.transition = 'none';
       canvas.style.opacity = '1';
     };
 
@@ -45,6 +52,7 @@ export const GhostLineCanvas = defineComponent({
       drawing = true;
       ctx.beginPath();
       ctx.moveTo(event.offsetX, event.offsetY);
+      paintedPixels.push({x:event.offsetX, y:event.offsetY })
     };
 
     /** Drawing move */
@@ -54,6 +62,7 @@ export const GhostLineCanvas = defineComponent({
       }
       ctx.lineTo(event.offsetX, event.offsetY);
       ctx.stroke();
+      paintedPixels.push({x:event.offsetX, y:event.offsetY })
     };
 
     /** Drawing end */
@@ -66,6 +75,8 @@ export const GhostLineCanvas = defineComponent({
       if (canvasRef.value && !props.diasbleFade) {
         fadeOut(canvasRef.value);
       }
+      emit('draw-end', paintedPixels);
+      paintedPixels = [];
     };
 
     onMounted(() => {
@@ -87,7 +98,7 @@ export const GhostLineCanvas = defineComponent({
       canvas.addEventListener('pointermove', onMove);
       window.addEventListener('pointerup', onUp);
 
-      // 🔹 Listen for every fade end
+      // Listen for every fade end
       canvas.addEventListener('transitionend', (event) => {
         // Only handle opacity transitions
         if (event.propertyName !== 'opacity') {
@@ -95,7 +106,7 @@ export const GhostLineCanvas = defineComponent({
         }
         
         const context = canvas.getContext('2d');
-        if (context) context.clearRect(0, 0, canvas.width, canvas.height);
+        if (context) {context.clearRect(0, 0, canvas.width, canvas.height);}
 
         // Reset opacity instantly for next draw
         canvas.style.transition = 'none';
