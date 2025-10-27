@@ -12,7 +12,7 @@
 
     <GhostLineCanvas
       :line-color="'rgba(12,10,59,0.23)'"
-      :line-cap="'square'"
+      :line-width="80"
       class="z">
       <a
         href="https://vite.dev"

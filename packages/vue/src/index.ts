@@ -38,7 +38,9 @@ export const GhostLineCanvas = defineComponent({
 
     /** Drawing start */
     const onDown = (event: PointerEvent) => {
-      if (!ctx || !canvasRef.value) return;
+      if (!ctx || !canvasRef.value) {
+        return;
+      }
       revive(canvasRef.value);
       drawing = true;
       ctx.beginPath();
@@ -92,10 +94,6 @@ export const GhostLineCanvas = defineComponent({
           return;
         }
         
-        if (getComputedStyle(canvas).opacity !== '0') {
-          return;
-        }
-
         const context = canvas.getContext('2d');
         if (context) context.clearRect(0, 0, canvas.width, canvas.height);
 
