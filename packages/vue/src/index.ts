@@ -5,7 +5,7 @@ type Point = {
 }
 export const GhostLineCanvas = defineComponent({
   name: 'GhostLineCanvas',
-  emits: ['draw-end'],
+  emits: ['draw-start', 'draw','draw-end'],
   props: {
     width: { type: Number, default: 640 },
     height: { type: Number, default: 400 },
@@ -17,9 +17,20 @@ export const GhostLineCanvas = defineComponent({
   },
   setup(props,{ emit }) {
     const canvasRef = ref<HTMLCanvasElement | null>(null);
+    const devicePixelRatio = window.devicePixelRatio || 1;
     let ctx: CanvasRenderingContext2D | null = null;
     let paintedPixels: Point[] = [];
     let drawing = false;
+
+    const buildRawData = () => {
+      const canvas = canvasRef.value;
+      return {
+        width:  canvas?.width  ?? 0,     // internal bitmap size (scaled by dpr)
+        height: canvas?.height ?? 0,
+        color:  props.lineColor,
+        devicePixelRatio
+      };
+    };
 
     /** Fade-out animation that triggers transitionend listener */
     const fadeOut = (canvas: HTMLCanvasElement, duration = props.fadingTime) => {
@@ -43,7 +54,7 @@ export const GhostLineCanvas = defineComponent({
       canvas.style.opacity = '1';
     };
 
-    /** Drawing start */
+    /** Drawing start **/
     const onDown = (event: PointerEvent) => {
       if (!ctx || !canvasRef.value) {
         return;
@@ -53,19 +64,21 @@ export const GhostLineCanvas = defineComponent({
       ctx.beginPath();
       ctx.moveTo(event.offsetX, event.offsetY);
       paintedPixels.push({x:event.offsetX, y:event.offsetY })
+      emit('draw-start', {...buildRawData(), paintedPixels});
     };
 
-    /** Drawing move */
+    /** Drawing move **/
     const onMove = (event: PointerEvent) => {
       if (!drawing || !ctx) {
         return;
       }
       ctx.lineTo(event.offsetX, event.offsetY);
       ctx.stroke();
+      emit('draw', {...buildRawData(), paintedPixels});
       paintedPixels.push({x:event.offsetX, y:event.offsetY })
     };
 
-    /** Drawing end */
+    /** Drawing end **/
     const onUp = () => {
       if (!drawing) {
         return;
@@ -75,7 +88,7 @@ export const GhostLineCanvas = defineComponent({
       if (canvasRef.value && !props.diasbleFade) {
         fadeOut(canvasRef.value);
       }
-      emit('draw-end', paintedPixels);
+      emit('draw-end', {...buildRawData(), paintedPixels});
       paintedPixels = [];
     };
 

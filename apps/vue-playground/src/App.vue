@@ -17,7 +17,9 @@
     <GhostLineCanvas
       :line-color="'rgba(222,9,159,0.23)'"
       :line-width="8"
-      @draw-end="handleCtx($event)" />
+      @draw-end="handleCtx($event)"
+      @draw-start="handleCtx($event)"
+      @draw="handleCtx($event)" />
     <a
       href="https://vite.dev"
       target="_blank">
