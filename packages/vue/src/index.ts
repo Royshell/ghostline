@@ -1,21 +1,33 @@
-import { defineComponent, h, onMounted, onBeforeUnmount, ref, PropType } from 'vue';
+import {
+  defineComponent,
+  h,
+  onMounted,
+  onBeforeUnmount,
+  ref,
+  PropType,
+} from 'vue';
+
 type Point = {
   x: number;
-  y: number; 
-}
+  y: number;
+};
+
 export const GhostLineCanvas = defineComponent({
   name: 'GhostLineCanvas',
-  emits: ['draw-start', 'draw','draw-end'],
+  emits: ['draw-start', 'draw', 'draw-end'],
   props: {
     width: { type: Number, default: 640 },
     height: { type: Number, default: 400 },
     lineWidth: { type: Number, default: 5 },
     lineColor: { type: String, default: '#FFF200' },
     fadingTime: { type: Number, default: 850 },
-    lineCap: { type: String as PropType<'butt' | 'square' | 'round'>, default: 'round'},
-    diasbleFade: {type: Boolean, default: false}
+    lineCap: {
+      type: String as PropType<'butt' | 'square' | 'round'>,
+      default: 'round',
+    },
+    diasbleFade: { type: Boolean, default: false },
   },
-  setup(props,{ emit }) {
+  setup(props, { emit }) {
     const canvasRef = ref<HTMLCanvasElement | null>(null);
     const devicePixelRatio = window.devicePixelRatio || 1;
     let ctx: CanvasRenderingContext2D | null = null;
@@ -25,15 +37,18 @@ export const GhostLineCanvas = defineComponent({
     const buildRawData = () => {
       const canvas = canvasRef.value;
       return {
-        width:  canvas?.width ?? 0,     // internal bitmap size (scaled by dpr)
+        width: canvas?.width ?? 0, // internal bitmap size (scaled by dpr)
         height: canvas?.height ?? 0,
-        color:  props.lineColor,
-        devicePixelRatio
+        color: props.lineColor,
+        devicePixelRatio,
       };
     };
 
     /** Fade-out animation that triggers transitionend listener */
-    const fadeOut = (canvas: HTMLCanvasElement, duration = props.fadingTime) => {
+    const fadeOut = (
+      canvas: HTMLCanvasElement,
+      duration = props.fadingTime,
+    ) => {
       if (!canvas) {
         return;
       }
@@ -47,7 +62,7 @@ export const GhostLineCanvas = defineComponent({
 
     /** Instantly restore canvas visibility */
     const revive = (canvas: HTMLCanvasElement) => {
-      if (!canvas)  {
+      if (!canvas) {
         return;
       }
       canvas.style.transition = 'none';
@@ -63,8 +78,8 @@ export const GhostLineCanvas = defineComponent({
       drawing = true;
       ctx.beginPath();
       ctx.moveTo(event.offsetX, event.offsetY);
-      paintedPixels.push({x:event.offsetX, y:event.offsetY })
-      emit('draw-start', {...buildRawData(), paintedPixels});
+      paintedPixels.push({ x: event.offsetX, y: event.offsetY });
+      emit('draw-start', { ...buildRawData(), paintedPixels });
     };
 
     /** Drawing move **/
@@ -74,8 +89,8 @@ export const GhostLineCanvas = defineComponent({
       }
       ctx.lineTo(event.offsetX, event.offsetY);
       ctx.stroke();
-      emit('draw', {...buildRawData(), paintedPixels});
-      paintedPixels.push({x:event.offsetX, y:event.offsetY })
+      emit('draw', { ...buildRawData(), paintedPixels });
+      paintedPixels.push({ x: event.offsetX, y: event.offsetY });
     };
 
     /** Drawing end **/
@@ -84,11 +99,11 @@ export const GhostLineCanvas = defineComponent({
         return;
       }
       drawing = false;
-      
+
       if (canvasRef.value && !props.diasbleFade) {
         fadeOut(canvasRef.value);
       }
-      emit('draw-end', {...buildRawData(), paintedPixels});
+      emit('draw-end', { ...buildRawData(), paintedPixels });
       paintedPixels = [];
     };
 
@@ -117,9 +132,11 @@ export const GhostLineCanvas = defineComponent({
         if (event.propertyName !== 'opacity') {
           return;
         }
-        
+
         const context = canvas.getContext('2d');
-        if (context) {context.clearRect(0, 0, canvas.width, canvas.height);}
+        if (context) {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+        }
 
         // Reset opacity instantly for next draw
         canvas.style.transition = 'none';
