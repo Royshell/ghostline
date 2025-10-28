@@ -25,7 +25,7 @@ export const GhostLineCanvas = defineComponent({
     const buildRawData = () => {
       const canvas = canvasRef.value;
       return {
-        width:  canvas?.width  ?? 0,     // internal bitmap size (scaled by dpr)
+        width:  canvas?.width ?? 0,     // internal bitmap size (scaled by dpr)
         height: canvas?.height ?? 0,
         color:  props.lineColor,
         devicePixelRatio
@@ -47,7 +47,7 @@ export const GhostLineCanvas = defineComponent({
 
     /** Instantly restore canvas visibility */
     const revive = (canvas: HTMLCanvasElement) => {
-      if (!canvas) {
+      if (!canvas)  {
         return;
       }
       canvas.style.transition = 'none';
