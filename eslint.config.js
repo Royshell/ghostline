@@ -59,7 +59,8 @@ module.exports = [
         'error',
         { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' },
       ],
-      'prettier/prettier': ['error', { singleQuote: true }],
+      'prettier/prettier': ['error', { singleQuote: true, quoteProps: 'preserve' }], 
+      'quote-props': ['error', 'consistent'] 
     },
   },
 
@@ -101,8 +102,6 @@ module.exports = [
         sourceType: 'module',
         tsconfigRootDir: root,
         project: [path.join(root, 'apps/vue-playground/tsconfig.node.json')],
-        // אפשר לבטל type-aware:
-        // project: null,
       },
     },
     plugins: { '@typescript-eslint': tsEslintPlugin, prettier: prettierPlugin },
@@ -137,7 +136,8 @@ module.exports = [
       prettier: prettierPlugin,
     },
     rules: {
-      'prettier/prettier': ['error', { singleQuote: true }],
+      'prettier/prettier': ['error', { singleQuote: true, quoteProps: 'preserve' }],
+      'quote-props': ['error', 'consistent'],
       '@typescript-eslint/no-unsafe-assignment': 'error',
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [

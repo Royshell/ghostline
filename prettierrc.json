@@ -7,6 +7,6 @@
   "bracketSpacing": true,
   "bracketSameLine": false,
   "vueIndentScriptAndStyle": false,
-  "quoteProps": "as-needed",
+  "quoteProps": "preserve",
   "singleAttributePerLine": false
 }

@@ -1,3 +1,4 @@
+import { BaseCanvasData, CanvasLineJoin, DrawPayload, Point } from './types';
 import {
   defineComponent,
   h,
@@ -7,14 +8,19 @@ import {
   PropType,
 } from 'vue';
 
-type Point = {
-  x: number;
-  y: number;
+type Emits = {
+  (event: 'draw-start', payload: DrawPayload): void;
+  (event: 'draw', payload: DrawPayload): void;
+  (event: 'draw-end', payload: DrawPayload): void;
 };
 
 export const GhostLineCanvas = defineComponent({
   name: 'GhostLineCanvas',
-  emits: ['draw-start', 'draw', 'draw-end'],
+  emits: {
+    'draw-start': (_value: DrawPayload) => true,
+    'draw': (_value: DrawPayload) => true,
+    'draw-end': (_value: DrawPayload) => true,
+  },
   props: {
     width: { type: Number, default: 640 },
     height: { type: Number, default: 400 },
@@ -22,25 +28,37 @@ export const GhostLineCanvas = defineComponent({
     lineColor: { type: String, default: '#FFF200' },
     fadingTime: { type: Number, default: 850 },
     lineCap: {
-      type: String as PropType<'butt' | 'square' | 'round'>,
+      type: String as PropType<CanvasLineCap>,
       default: 'round',
     },
-    diasbleFade: { type: Boolean, default: false },
+    lineJoin: {
+      type: String as PropType<CanvasLineJoin>,
+      default: 'round',
+    },
+    disableFade: { type: Boolean, default: false },
   },
-  setup(props, { emit }) {
+  setup(props, context) {
+    const emit = context.emit as Emits;
     const canvasRef = ref<HTMLCanvasElement | null>(null);
     const devicePixelRatio = window.devicePixelRatio || 1;
     let ctx: CanvasRenderingContext2D | null = null;
     let paintedPixels: Point[] = [];
     let drawing = false;
 
-    const buildRawData = () => {
+    const buildRawData = (): BaseCanvasData => {
       const canvas = canvasRef.value;
       return {
         width: canvas?.width ?? 0, // internal bitmap size (scaled by dpr)
         height: canvas?.height ?? 0,
-        color: props.lineColor,
         devicePixelRatio,
+      };
+    };
+
+    const buildDrawPayload = (): DrawPayload => {
+      return {
+        ...buildRawData(),
+        paintedPixels: [...paintedPixels],
+        color: props.lineColor,
       };
     };
 
@@ -79,7 +97,7 @@ export const GhostLineCanvas = defineComponent({
       ctx.beginPath();
       ctx.moveTo(event.offsetX, event.offsetY);
       paintedPixels.push({ x: event.offsetX, y: event.offsetY });
-      emit('draw-start', { ...buildRawData(), paintedPixels });
+      emit('draw-start', buildDrawPayload());
     };
 
     /** Drawing move **/
@@ -89,8 +107,8 @@ export const GhostLineCanvas = defineComponent({
       }
       ctx.lineTo(event.offsetX, event.offsetY);
       ctx.stroke();
-      emit('draw', { ...buildRawData(), paintedPixels });
       paintedPixels.push({ x: event.offsetX, y: event.offsetY });
+      emit('draw', buildDrawPayload());
     };
 
     /** Drawing end **/
@@ -100,10 +118,10 @@ export const GhostLineCanvas = defineComponent({
       }
       drawing = false;
 
-      if (canvasRef.value && !props.diasbleFade) {
+      if (canvasRef.value && !props.disableFade) {
         fadeOut(canvasRef.value);
       }
-      emit('draw-end', { ...buildRawData(), paintedPixels });
+      emit('draw-end', buildDrawPayload());
       paintedPixels = [];
     };
 
@@ -117,6 +135,7 @@ export const GhostLineCanvas = defineComponent({
 
       ctx.lineWidth = props.lineWidth;
       ctx.lineCap = props.lineCap;
+      ctx.lineJoin = props.lineJoin;
       ctx.strokeStyle = props.lineColor;
 
       canvas.style.touchAction = 'none';
