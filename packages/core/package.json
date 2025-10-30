@@ -1,6 +1,6 @@
 {
   "name": "@royshell/ghostline-core",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Core engine for GhostLine (ephemeral drawing & canvas tooling).",
   "type": "module",
   "main": "dist/index.cjs",
@@ -13,9 +13,15 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "sideEffects": false,
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "clean": "rimraf dist",

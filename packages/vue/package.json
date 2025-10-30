@@ -1,7 +1,9 @@
 {
   "name": "@royshell/ghostline-vue",
-  "version": "0.0.1",
-  "description": "Vue 3 wrapper for GhostLine.",
+  "version": "0.1.0",
+  "description": "Vue 3 wrapper for GhostLine - canvas drawing with ghost trail effects",
+  "author": "Roy Shell",
+  "license": "MIT",
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -13,10 +15,31 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Royshell/ghostline.git",
+    "directory": "packages/vue"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "canvas",
+    "drawing",
+    "signature",
+    "ghost-trail"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "sideEffects": false,
-  "publishConfig": { "access": "public" },
-  "peerDependencies": { "vue": ">=3.3.0" },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "vue": ">=3.3.0"
+  },
   "dependencies": {
     "@royshell/ghostline-core": "workspace:*"
   },
