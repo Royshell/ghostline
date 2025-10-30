@@ -15,8 +15,9 @@
       alt="Vite logo" />
 
     <GhostLineCanvas
-      :line-color="'rgba(222,199,59,0.23)'"
+      :line-color="'rgba(22,99,159,0.73)'"
       :line-width="8"
+      :responsive="true"
       @draw-end="handleCtx($event)"
       @draw-start="handleCtx($event)"
       @draw="handleCtx($event)" />
