@@ -9,18 +9,18 @@ It’s perfect for presentation overlays, teaching tools, or any interactive can
 ## 🚀 Installation
 
 ```bash
-npm install ghostline-canvas
+npm install ghostline
 # or
-pnpm add ghostline-canvas
+pnpm add ghostline
 # or
-yarn add ghostline-canvas
+yarn add ghostline
 
 
 
 ## Usage
 ```vue
 <script setup>
-import { GhostLineCanvas } from '@royshell/ghostline-vue'
+import { GhostLineCanvas } from 'ghostline';
 
 const handleDrawEnd = (payload) => {
   console.log('Draw ended:', payload)
