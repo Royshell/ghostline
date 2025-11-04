@@ -104,9 +104,6 @@ importers:
 
   packages/vue:
     dependencies:
-      '@royshell/ghostline-core':
-        specifier: workspace:*
-        version: link:../core
       vue:
         specifier: '>=3.3.0'
         version: 3.5.22(typescript@5.9.3)

@@ -17,10 +17,8 @@
     </video>
     <GhostLineCanvas
       :line-width="20"
-      :line-color="'#000000'"
-      :fading-time="5000"
-      :width="960"
-      :height="540" />
+      :line-color="'blue'"
+      :fading-time="5000" />
   </div>
 </template>
 

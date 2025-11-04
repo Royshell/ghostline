@@ -22,6 +22,7 @@ export const GhostLineCanvas = defineComponent({
     'draw-end': (_value: DrawPayload) => true,
   },
   props: {
+    fitToParent: { type: Boolean, default: false },
     width: { type: Number, default: 640 },
     height: { type: Number, default: 400 },
     lineWidth: { type: Number, default: 5 },
@@ -44,6 +45,7 @@ export const GhostLineCanvas = defineComponent({
     let ctx: CanvasRenderingContext2D | null = null;
     let paintedPixels: Point[] = [];
     let drawing = false;
+    let resizeObserver: ResizeObserver | null = null;
 
     const buildRawData = (): BaseCanvasData => {
       const canvas = canvasRef.value;
@@ -144,6 +146,15 @@ export const GhostLineCanvas = defineComponent({
         return;
       }
 
+      if (props.fitToParent) {
+        const parent = canvas.parentElement!;
+        resizeObserver = new ResizeObserver(() => {
+          canvas.width = parent.clientWidth;
+          canvas.height = parent.clientHeight;
+        });
+        resizeObserver.observe(parent);
+      }
+
       ctx.lineWidth = props.lineWidth;
       ctx.lineCap = props.lineCap;
       ctx.lineJoin = props.lineJoin;
@@ -180,6 +191,7 @@ export const GhostLineCanvas = defineComponent({
         return;
       }
 
+      resizeObserver?.disconnect();
       canvas.removeEventListener('pointerdown', onDown);
       canvas.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
