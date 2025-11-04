@@ -1,6 +1,6 @@
 {
   "name": "ghostline",
-  "version": "0.1.0",
+  "version": "0.1.01",
   "description": "Vue 3 wrapper for GhostLine - canvas drawing with ghost trail effects",
   "author": "Roy Shell",
   "license": "MIT",
@@ -45,9 +45,6 @@
   },
   "peerDependencies": {
     "vue": ">=3.3.0"
-  },
-  "dependencies": {
-    "@royshell/ghostline-core": "workspace:*"
   },
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
