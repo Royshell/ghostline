@@ -1,47 +1,30 @@
 <script setup lang="ts">
-  import HelloWorld from "./components/HelloWorld.vue";
-  import { GhostLineCanvas } from "@royshell/ghostline-vue";
+  import { GhostLineCanvas } from "ghostline";
 
-  function handleCtx(ctx: CanvasRenderingContext2D) {
+  function handleCtx(ctx) {
     console.log(ctx);
   }
 </script>
 
 <template>
   <div class="wrap">
-    <img
-      src="/vite.svg"
-      class="logo"
-      alt="Vite logo" />
-
+    <video
+      autoplay
+      muted
+      loop
+      playsinline>
+      <source src="https://www.pexels.com/download/video/854225/" />
+    </video>
     <GhostLineCanvas
-      :line-color="'rgba(22,99,159,0.73)'"
-      :line-width="8"
-      :responsive="true"
-      @draw-end="handleCtx($event)"
-      @draw-start="handleCtx($event)"
-      @draw="handleCtx($event)" />
-    <a
-      href="https://vite.dev"
-      target="_blank">
-      <img
-        src="/vite.svg"
-        class="logo"
-        alt="Vite logo" />
-    </a>
-    <a
-      href="https://vuejs.org/"
-      target="_blank">
-      <img
-        src="./assets/vue.svg"
-        class="logo vue"
-        alt="Vue logo" />
-    </a>
+      :line-width="20"
+      :line-color="'#000000'"
+      :fading-time="5000"
+      :width="960"
+      :height="540" />
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
+<style>
   .logo {
     height: 6em;
     padding: 1.5em;
@@ -55,8 +38,19 @@
     filter: drop-shadow(0 0 2em #42b883aa);
   }
   .wrap {
-    background: url(https://pub-55ace036049a4ea9a5b6c33f7c2e1974.r2.dev/public/BG%20Image3.png)
-      no-repeat center center fixed;
+    /* //background: url(https://pub-55ace036049a4ea9a5b6c33f7c2e1974.r2.dev/public/BG%20Image3.png)
+      no-repeat center center fixed; */
+    width: 960px;
+    height: 540px;
+    position: relative;
+  }
+  video {
+    height: 100%;
+    width: 100%;
+  }
+  canvas {
+    position: absolute;
+    top: 0;
   }
   .z {
     z-index: 9999999999999999999999;

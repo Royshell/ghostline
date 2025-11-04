@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.5.22",
-    "@royshell/ghostline-vue": "workspace:*"
+    "ghostline": "^0.1.0",
+    "vue": "^3.5.22"
   },
   "devDependencies": {
     "@types/node": "^24.6.0",

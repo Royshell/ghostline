@@ -23,10 +23,16 @@
   "keywords": [
     "vue",
     "vue3",
+    "typescript",
     "canvas",
     "drawing",
     "signature",
-    "ghost-trail"
+    "ghost-trail",
+    "paint",
+    "animations",
+    "fade",
+    "fading",
+    "drawing"
   ],
   "files": [
     "dist",
