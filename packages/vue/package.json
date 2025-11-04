@@ -1,6 +1,6 @@
 {
   "name": "ghostline",
-  "version": "0.1.02",
+  "version": "0.1.021",
   "description": "Vue 3 wrapper for GhostLine - canvas drawing with ghost trail effects",
   "author": "Roy Shell",
   "license": "MIT",
