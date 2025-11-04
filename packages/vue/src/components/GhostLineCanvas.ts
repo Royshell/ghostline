@@ -47,6 +47,17 @@ export const GhostLineCanvas = defineComponent({
     let drawing = false;
     let resizeObserver: ResizeObserver | null = null;
 
+    const applyContextStyles = () => {
+      if (!ctx) {
+        return;
+      }
+
+      ctx.lineWidth = props.lineWidth;
+      ctx.lineCap = props.lineCap;
+      ctx.lineJoin = props.lineJoin;
+      ctx.strokeStyle = props.lineColor;
+    };
+
     const buildRawData = (): BaseCanvasData => {
       const canvas = canvasRef.value;
       return {
@@ -139,26 +150,18 @@ export const GhostLineCanvas = defineComponent({
 
     onMounted(() => {
       const canvas = canvasRef.value!;
-
-      ctx = canvas.getContext('2d');
-
-      if (!ctx) {
-        return;
-      }
+      applyContextStyles();
 
       if (props.fitToParent) {
         const parent = canvas.parentElement!;
         resizeObserver = new ResizeObserver(() => {
           canvas.width = parent.clientWidth;
           canvas.height = parent.clientHeight;
+          applyContextStyles();
         });
         resizeObserver.observe(parent);
       }
-
-      ctx.lineWidth = props.lineWidth;
-      ctx.lineCap = props.lineCap;
-      ctx.lineJoin = props.lineJoin;
-      ctx.strokeStyle = props.lineColor;
+      ctx = canvas.getContext('2d');
 
       canvas.style.touchAction = 'none';
       canvas.style.opacity = '1';

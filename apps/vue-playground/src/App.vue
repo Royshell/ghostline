@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { GhostLineCanvas } from "ghostline";
+  import { GhostLineCanvas } from "../../../packages/vue/src/index";
 
   function handleCtx(ctx) {
     console.log(ctx);
@@ -17,8 +17,9 @@
     </video>
     <GhostLineCanvas
       :line-width="20"
-      :line-color="'blue'"
-      :fading-time="5000" />
+      :line-color="'green'"
+      :fading-time="1000"
+      :fit-to-parent="true" />
   </div>
 </template>
 
