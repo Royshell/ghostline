@@ -8,9 +8,9 @@ It's perfect for presentation overlays, teaching tools, or any interactive canva
 
 ## 🎬 Demo
 
-![Basic drawing demo - [INSERT docs/gifs/basic-draw.gif HERE]](![./docs/gifs/basic-draw.gif](https://res.cloudinary.com/drehggl5c/image/upload/v1762258801/ghostlineexample1.gif))
+![Basic drawing demo - [INSERT docs/gifs/basic-draw.gif HERE]](![https://res.cloudinary.com/drehggl5c/image/upload/v1762705262/ghost-example-1_iwgyhe.gif](https://res.cloudinary.com/drehggl5c/image/upload/v1762705262/ghost-example-1_iwgyhe.gif))
 
-**Try it live:** [CodeSandbox Demo Link](PLACEHOLDER_CODESANDBOX_URL)
+**Try it live:** [CodeSandbox Demo Link](https://2rhg87.csb.app/)
 
 ---
 
