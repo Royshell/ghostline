@@ -150,6 +150,7 @@ export const GhostLineCanvas = defineComponent({
 
     onMounted(() => {
       const canvas = canvasRef.value!;
+      ctx = canvas.getContext('2d');
       applyContextStyles();
 
       if (props.fitToParent) {
@@ -161,7 +162,6 @@ export const GhostLineCanvas = defineComponent({
         });
         resizeObserver.observe(parent);
       }
-      ctx = canvas.getContext('2d');
 
       canvas.style.touchAction = 'none';
       canvas.style.opacity = '1';
