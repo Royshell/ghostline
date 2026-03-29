@@ -8,7 +8,7 @@ It's perfect for presentation overlays, teaching tools, or any interactive canva
 
 ## 🎬 Demo
 
-Basic drawing demo ![Demi gif](https://res.cloudinary.com/drehggl5c/image/upload/v1762705262/ghost-example-1_iwgyhe.gif)
+Basic drawing demo ![Demo gif](https://res.cloudinary.com/drehggl5c/image/upload/v1762705262/ghost-example-1_iwgyhe.gif)
 
 **Try it live:** [CodeSandbox Demo Link](https://codesandbox.io/p/sandbox/9pdzgl)
 
